@@ -120,16 +120,16 @@ export const buildings: Building[] = [
 ];
 
 export const users: AppUser[] = [
-  { id: "1", fullName: "Иванов Алексей Сергеевич", role: "Админ", email: "ivanov@university.ru", addedAt: "2023-09-01" },
-  { id: "2", fullName: "Петрова Мария Игоревна", role: "Кладовщик", email: "petrova@university.ru", addedAt: "2023-09-15" },
-  { id: "3", fullName: "Сидоров Кирилл Владимирович", role: "Кладовщик", email: "sidorov@university.ru", addedAt: "2023-10-02" },
-  { id: "4", fullName: "Кузнецова Елена Павловна", role: "Сотрудник", email: "kuznetsova@university.ru", addedAt: "2023-10-20" },
-  { id: "5", fullName: "Смирнов Дмитрий Андреевич", role: "Сотрудник", email: "smirnov@university.ru", addedAt: "2023-11-05" },
-  { id: "6", fullName: "Николаева Ольга Викторовна", role: "Сотрудник", email: "nikolaeva@university.ru", addedAt: "2024-01-12" },
-  { id: "7", fullName: "Волков Павел Николаевич", role: "Кладовщик", email: "volkov@university.ru", addedAt: "2024-02-28" },
-  { id: "8", fullName: "Морозова Анна Дмитриевна", role: "Сотрудник", email: "morozova@university.ru", addedAt: "2024-03-14" },
-  { id: "9", fullName: "Егоров Игорь Русланович", role: "Сотрудник", email: "egorov@university.ru", addedAt: "2024-05-30" },
-  { id: "10", fullName: "Захарова Дарья Олеговна", role: "Админ", email: "zaharova@university.ru", addedAt: "2024-06-18" },
+  { id: "1", code: "USR-001", fullName: "Иванов Алексей Сергеевич", role: "Админ", email: "ivanov@university.ru", phone: "—", addedAt: "2023-09-01", emailVerified: true, active: true },
+  { id: "2", code: "USR-002", fullName: "Петрова Мария Игоревна", role: "Кладовщик", email: "petrova@university.ru", phone: "—", addedAt: "2023-09-15", emailVerified: true, active: true },
+  { id: "3", code: "USR-003", fullName: "Сидоров Кирилл Владимирович", role: "Кладовщик", email: "sidorov@university.ru", phone: "—", addedAt: "2023-10-02", emailVerified: true, active: true },
+  { id: "4", code: "USR-004", fullName: "Кузнецова Елена Павловна", role: "Сотрудник", email: "kuznetsova@university.ru", phone: "—", addedAt: "2023-10-20", emailVerified: true, active: true },
+  { id: "5", code: "USR-005", fullName: "Смирнов Дмитрий Андреевич", role: "Сотрудник", email: "smirnov@university.ru", phone: "—", addedAt: "2023-11-05", emailVerified: true, active: true },
+  { id: "6", code: "USR-006", fullName: "Николаева Ольга Викторовна", role: "Сотрудник", email: "nikolaeva@university.ru", phone: "—", addedAt: "2024-01-12", emailVerified: true, active: true },
+  { id: "7", code: "USR-007", fullName: "Волков Павел Николаевич", role: "Кладовщик", email: "volkov@university.ru", phone: "—", addedAt: "2024-02-28", emailVerified: true, active: true },
+  { id: "8", code: "USR-008", fullName: "Морозова Анна Дмитриевна", role: "Сотрудник", email: "morozova@university.ru", phone: "—", addedAt: "2024-03-14", emailVerified: false, active: true },
+  { id: "9", code: "USR-009", fullName: "Егоров Игорь Русланович", role: "Сотрудник", email: "egorov@university.ru", phone: "—", addedAt: "2024-05-30", emailVerified: false, active: true },
+  { id: "10", code: "USR-010", fullName: "Захарова Дарья Олеговна", role: "Админ", email: "zaharova@university.ru", phone: "—", addedAt: "2024-06-18", emailVerified: true, active: true },
 ];
 
 export const categoryDistribution = [
