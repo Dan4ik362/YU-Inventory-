@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object State, OwningProcess; Get-Process -Name node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Read(//c/Users/danib/Downloads/Система учета ТМЦ университета/design_handoff_tmc_campus_map/**)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"cleared\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(ls -la \"/c/Users/danib/Downloads\" 2>/dev/null | grep -iE \"logotip|logo|kopiya|копия\")",
+      "Read(//c/Users/danib/Downloads/**)",
+      "Bash(cp \"/c/Users/danib/Downloads/logotip-kopiyapng.png\" \"/c/Users/danib/my-next-app/public/logo.png\" && echo \"copied\" && ls -la \"/c/Users/danib/my-next-app/public/logo.png\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP:%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP:%{http_code}\\\\n\" http://localhost:3000/locations)",
+      "Bash(git add *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\danib\\my-next-app",
+      "C:\\Users\\danib\\Downloads"
+    ]
+  }
+}
