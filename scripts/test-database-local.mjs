@@ -81,6 +81,16 @@ try {
     TEST_DATABASE_MIGRATOR_URL:
       `postgresql://${migrator}:${migratorPassword}@127.0.0.1:${port}/${database}`,
   };
+  run(process.execPath, [
+    path.join(root, "node_modules/tsx/dist/cli.mjs"),
+    "scripts/db/migrate.ts",
+    "--target=test",
+  ], testEnvironment);
+  run(process.execPath, [
+    path.join(root, "node_modules/tsx/dist/cli.mjs"),
+    "scripts/db/smoke.ts",
+    "--target=test",
+  ], testEnvironment);
   for (const databaseTest of getDatabaseTestFiles(root)) {
     run(process.execPath, [
       path.join(root, "node_modules/vitest/vitest.mjs"),

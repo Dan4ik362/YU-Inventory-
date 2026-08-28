@@ -58,22 +58,30 @@ async function main() {
          has_schema_privilege(current_user, 'yu_migrations', 'USAGE'),
          false
        ) as can_use_migration_schema,
-       coalesce(
-         has_table_privilege(
-           current_user,
-           '"yu_migrations"."__drizzle_migrations"',
-           'SELECT'
-         ),
-         false
-       ) as can_read_migration_history,
-       coalesce(
-         has_table_privilege(
-           current_user,
-           '"yu_migrations"."__drizzle_migrations"',
-           'INSERT'
-         ),
-         false
-       ) as can_write_migration_history,
+       case
+         when has_schema_privilege(current_user, 'yu_migrations', 'USAGE')
+         then coalesce(
+           has_table_privilege(
+             current_user,
+             '"yu_migrations"."__drizzle_migrations"',
+             'SELECT'
+           ),
+           false
+         )
+         else false
+       end as can_read_migration_history,
+       case
+         when has_schema_privilege(current_user, 'yu_migrations', 'USAGE')
+         then coalesce(
+           has_table_privilege(
+             current_user,
+             '"yu_migrations"."__drizzle_migrations"',
+             'INSERT'
+           ),
+           false
+         )
+         else false
+       end as can_write_migration_history,
        coalesce(
          has_table_privilege(
            current_user,
