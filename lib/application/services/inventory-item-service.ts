@@ -124,14 +124,7 @@ export class InventoryItemService {
     const item = await this.unitOfWork.read(async ({ items }) => {
       const value = await items.findItemById(id);
       if (!value) throw new ApplicationError("not_found", "item_not_found");
-      if (
-        !hasPermission(actor.role, "inventory.item.read_all") &&
-        !(
-          hasPermission(actor.role, "inventory.item.read_assigned") &&
-          (value.responsibleId === actor.userId ||
-            value.roomResponsibleId === actor.userId)
-        )
-      ) {
+      if (!canReadItem(value, actor)) {
         // Do not reveal whether an item ID exists to a caller outside its
         // visibility scope. Item detail reads use the same public result for
         // missing and inaccessible resources.
@@ -151,10 +144,11 @@ export class InventoryItemService {
       const item = await items.findItemById(normalizedId);
       if (!item) throw new ApplicationError("not_found", "item_not_found");
       assertItemReadable(item, actor);
-      // A linked component is part of the assigned item's composition. Hiding
-      // it when another employee is responsible for that component makes the
-      // composition look incomplete and prevents the card from being useful.
-      return items.listComponents(normalizedId);
+      const components = await items.listComponents(normalizedId);
+      // Employees have visibility only into components they can read directly.
+      // Returning a full item DTO for a foreign component would bypass the
+      // read_assigned boundary through the composition endpoint.
+      return components.filter((component) => canReadItem(component, actor));
     });
     return records.map(toItemDto);
   }
@@ -1464,18 +1458,21 @@ function assertItemReadable(
   item: InventoryItemRecord,
   actor: AuthorizationActor,
 ): void {
-  if (
-    !hasPermission(actor.role, "inventory.item.read_all") &&
-    !(
-      hasPermission(actor.role, "inventory.item.read_assigned") &&
-      (item.responsibleId === actor.userId ||
-        item.roomResponsibleId === actor.userId)
-    )
-  ) {
+  if (!canReadItem(item, actor)) {
     // Read-only item subresources (comments, components, operations and
     // attachments) must not turn an existing foreign item into an oracle.
     throw itemNotFound();
   }
+}
+
+function canReadItem(
+  item: InventoryItemRecord,
+  actor: AuthorizationActor,
+): boolean {
+  return hasPermission(actor.role, "inventory.item.read_all") ||
+    (hasPermission(actor.role, "inventory.item.read_assigned") &&
+      (item.responsibleId === actor.userId ||
+        item.roomResponsibleId === actor.userId));
 }
 
 function itemNotFound() {

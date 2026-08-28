@@ -12,13 +12,24 @@ import { verifySessionToken } from "@/lib/security/session";
 import { consumeApiRateLimit } from "@/lib/security/rate-limiter";
 import { requireSameOriginMutation } from "@/lib/security/request-integrity";
 
-export async function requireCurrentUser(request: Request) {
+type CurrentUserRateLimit = "consume" | "already_consumed";
+
+interface RequireCurrentUserOptions {
+  rateLimit?: CurrentUserRateLimit;
+}
+
+export async function requireCurrentUser(
+  request: Request,
+  options: RequireCurrentUserOptions = {},
+) {
   requireSameOriginMutation(request);
-  const limit = await consumeApiRateLimit(request);
-  if (!limit.allowed) {
-    throw new ApplicationError("rate_limited", "too_many_requests", {
-      safeDetails: { retryAfterSeconds: String(limit.retryAfterSeconds) },
-    });
+  if ((options.rateLimit ?? "consume") === "consume") {
+    const limit = await consumeApiRateLimit(request);
+    if (!limit.allowed) {
+      throw new ApplicationError("rate_limited", "too_many_requests", {
+        safeDetails: { retryAfterSeconds: String(limit.retryAfterSeconds) },
+      });
+    }
   }
   const session = sessionFromRequest(request);
   if (!session) {
@@ -64,8 +75,9 @@ async function resolveSessionSubject(subject: string, sessionVersion: number) {
 export async function requirePermission(
   request: Request,
   permission: AppPermission,
+  options: RequireCurrentUserOptions = {},
 ) {
-  const user = await requireCurrentUser(request);
+  const user = await requireCurrentUser(request, options);
   if (!hasPermission(user.role, permission)) {
     throw new ApplicationError("forbidden", "forbidden");
   }

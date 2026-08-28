@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     // SECURITY: settings endpoint requires an authenticated session.
     // Previously this GET was unauthenticated — any request could read
     // system configuration (integration keys, SMTP, feature flags).
-    await requireCurrentUser(request);
+    await requireCurrentUser(request, { rateLimit: "already_consumed" });
     return Response.json(await getApplicationServices().settings.get(), {
       headers,
     });
@@ -38,7 +38,9 @@ export async function PATCH(request: Request) {
   if (!apiLimit.allowed) return rateLimitedResponse(apiLimit);
   const headers = rateLimitHeaders(apiLimit);
   try {
-    await requirePermission(request, "legacy.settings.manage");
+    await requirePermission(request, "legacy.settings.manage", {
+      rateLimit: "already_consumed",
+    });
     let input: unknown;
     try {
       input = await readLimitedJson(request);

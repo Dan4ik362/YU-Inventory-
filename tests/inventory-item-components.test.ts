@@ -110,7 +110,7 @@ test("component mutations are administrator-only and reject self-links", async (
   );
 });
 
-test("employee sees every linked item because all staff can view the full registry", async () => {
+test("employee composition excludes foreign components", async () => {
   const current = item(IDS[0], "employee-1");
   const assigned = item(IDS[1], "employee-1");
   const other = { ...item("33333333-3333-4333-8333-333333333333"), responsibleId: "employee-2" };
@@ -122,7 +122,7 @@ test("employee sees every linked item because all staff can view the full regist
     userId: "employee-1",
     role: "employee",
   });
-  assert.deepEqual(result.map((value) => value.id), [IDS[1], other.id]);
+  assert.deepEqual(result.map((value) => value.id), [IDS[1]]);
 });
 
 test("item reads hide an inaccessible existing item as not found", async () => {
