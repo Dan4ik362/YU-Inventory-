@@ -23,27 +23,8 @@ test("CI validates the documented release gates in dependency order", async () =
   assert.match(workflow, /npm run ui:check/);
   assert.match(workflow, /npm run db:check/);
   assert.match(workflow, /npm run storybook:build/);
-  assert.match(workflow, /docker compose -f docker-compose.production.yml config --quiet/);
-});
-
-test("production Compose imports legacy settings before the DB-aware runtime starts", async () => {
-  const compose = await readFile("docker-compose.production.yml", "utf8");
-  const mobileCompose = await readFile("docker-compose.mobile.yml", "utf8");
-  const migrationIndex = compose.indexOf("npm run db:migrate -- --target=production");
-  const importIndex = compose.indexOf("npm run db:import-settings -- --target=production");
-  const smokeIndex = compose.indexOf("npm run db:smoke -- --target=production");
-
-  assert.ok(migrationIndex >= 0);
-  assert.ok(importIndex > migrationIndex);
-  assert.ok(smokeIndex > importIndex);
-  assert.match(compose, /source: \.\/\.settings-import/);
-  assert.match(compose, /target: \/run\/legacy-settings/);
-  assert.match(compose, /YU_DATA_DIRECTORY: \/run\/legacy-settings/);
-  assert.doesNotMatch(compose, /source: .*\.data/);
-
-  const mobileMigrate = mobileCompose.match(/  migrate:[\s\S]*?\n  app:/)?.[0] ?? "";
-  assert.match(mobileMigrate, /- \.\/\.settings-import:\/run\/legacy-settings:ro/);
-  assert.doesNotMatch(mobileMigrate, /- \.\/\.data:\/run\/legacy-settings:ro/);
+  assert.match(workflow, /sudo systemctl start postgresql\.service/);
+  assert.doesNotMatch(workflow, /docker/i);
 });
 
 test("external development startup prepares the database before Next.js", async () => {

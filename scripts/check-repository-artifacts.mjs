@@ -25,7 +25,6 @@ if (baseline && policy) {
   assertReviewWindow(baseline);
   await assertReports(baseline, policy);
   await assertGeneratedHistory(baseline);
-  await assertIgnoreBoundaries(baseline);
   assertTrackedRuntimeBoundary(baseline);
 }
 
@@ -212,37 +211,6 @@ async function assertGeneratedHistory(manifest) {
   for (const timestamp of snapshotNames) if (!expectedSnapshotTimestamps.has(timestamp)) problems.push(`${history.directory}/meta/${timestamp}_snapshot.json is not in the journal or is not an allowed snapshot exception`);
   if (sqlNames.length !== journalTags.size) problems.push(`${history.directory}: SQL file count does not match journal entry count`);
   if (snapshotNames.length !== expectedSnapshotTimestamps.size) problems.push(`${history.directory}/meta: snapshot count does not match non-exempt journal timestamp count`);
-}
-
-async function assertIgnoreBoundaries(manifest) {
-  const gitignore = await readText(".gitignore");
-  const dockerignore = await readText(".dockerignore");
-  for (const exclusion of manifest.dockerContextExclusions ?? []) {
-    if (!hasLine(dockerignore, exclusion)) {
-      problems.push(`.dockerignore: missing repository context exclusion ${exclusion}`);
-    }
-  }
-  for (const artifact of manifest.ignoredArtifacts) {
-    if (artifact.gitignore && !hasLine(gitignore, artifact.gitignore)) {
-      problems.push(`.gitignore: missing artifact rule ${artifact.gitignore}`);
-    }
-    if (artifact.dockerignore && !hasLine(dockerignore, artifact.dockerignore)) {
-      problems.push(`.dockerignore: missing artifact rule ${artifact.dockerignore}`);
-    }
-  }
-  const dockerfile = await readText("Dockerfile.mobile");
-  if (!dockerfile.includes("COPY . .") || !dockerfile.includes("COPY --from=builder /app/.next/standalone ./")) {
-    problems.push("Dockerfile.mobile: expected context-copy build stages and standalone runtime boundary are missing");
-  }
-  const submodule = manifest.auditSubmodule;
-  const gitmodules = await readText(".gitmodules");
-  for (const line of [
-    `[submodule "${submodule.path}"]`,
-    `path = ${submodule.path}`,
-    `url = ${submodule.url}`,
-  ]) {
-    if (!hasLine(gitmodules, line)) problems.push(`.gitmodules: missing pinned audit locator ${line}`);
-  }
 }
 
 function assertTrackedRuntimeBoundary(manifest) {

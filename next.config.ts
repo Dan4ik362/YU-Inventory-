@@ -32,9 +32,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   experimental: {
-    // Production runtime bundles must not expose source maps. The Docker
-    // packaging step keeps a second defense, but the build itself should be
-    // safe to inspect and archive.
+    // Production builds must not expose source maps.
     turbopackSourceMaps: false,
     serverSourceMaps: false,
   },

@@ -1,38 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
-const requiredDockerExclusions = [
-  "/_audit/",
-  "docs",
-  "tests",
-  "/_migration/",
-  "/errors/",
-  "/storybook-static/",
-  "drizzle-probe",
-  "*.tsbuildinfo",
-  "**/.data/**",
-  "**/.env*",
-  "**/*secret*",
-  "**/*credential*",
-  "**/*.dump",
-  "**/PG_VERSION",
-];
-const dockerIgnore = readFileSync(".dockerignore", "utf8");
-for (const exclusion of requiredDockerExclusions) {
-  if (!dockerIgnore.split(/\r?\n/).includes(exclusion)) {
-    throw new Error(`Missing mandatory Docker exclusion: ${exclusion}`);
-  }
-}
-for (const inclusion of [
-  "!lib/security/credentials.ts",
-  "!lib/security/secret-configuration.ts",
-  "!lib/server/persistence/legacy/legacy-credential-source.ts",
-]) {
-  if (!dockerIgnore.split(/\r?\n/).includes(inclusion)) {
-    throw new Error(`Missing mandatory Docker source inclusion: ${inclusion}`);
-  }
-}
-
 const nextConfig = readFileSync("next.config.ts", "utf8");
 const proxy = readFileSync("proxy.ts", "utf8");
 if (/script-src[^"\n]*unsafe-inline/.test(nextConfig + proxy)) {
