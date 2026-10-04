@@ -103,14 +103,16 @@ export async function parseInventoryWorkbook(
   );
   const inventoryNumbers = new Map<string, number>();
   let nonEmptyRows = 0;
+  let stopAfterLimit = false;
 
-  for (let rowNumber = 2; rowNumber <= sheet.actualRowCount; rowNumber += 1) {
-    const row = sheet.getRow(rowNumber);
-    if (isBlankImportRow(row.values)) continue;
+  sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+    if (stopAfterLimit || rowNumber < 2) return;
+    if (isBlankImportRow(row.values)) return;
     nonEmptyRows += 1;
     if (nonEmptyRows > MAX_IMPORT_ROWS) {
       errors.push({ rowNumber, field: "file", code: "too_many_rows" });
-      break;
+      stopAfterLimit = true;
+      return;
     }
     const rowErrors: InventoryExcelValidationError[] = [];
     const read = (key: HeaderKey) => {
@@ -186,7 +188,7 @@ export async function parseInventoryWorkbook(
         inventoryNumber: inventoryNumber || null,
       });
     }
-  }
+  });
   return {
     preview: { rows, errors, validRowCount: inputs.length },
     inputs,

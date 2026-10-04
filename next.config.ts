@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   output: "standalone",
   poweredByHeader: false,
+  typescript: {
+    // Keep production type checking scoped to the deployable application.
+    // Tests and the nested YU-TMC checkout have their own typecheck projects.
+    tsconfigPath: "tsconfig.build.json",
+  },
   experimental: {
     // Production builds must not expose source maps.
     turbopackSourceMaps: false,
